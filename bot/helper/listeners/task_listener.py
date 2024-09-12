@@ -269,7 +269,7 @@ class TaskListener(TaskConfig):
             ):
                 buttons = ButtonMaker()
                 if link:
-                    buttons.ubutton("Drive Link", link)
+                    buttons.ubutton("Drive Link", link, "header")
                 else:
                     msg += f"\n\nPath: <code>{rclonePath}</code>"
                 if (
