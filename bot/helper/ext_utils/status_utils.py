@@ -165,18 +165,18 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
 
     buttons = ButtonMaker()
     if not is_user:
-        buttons.data_button("ʙᴏᴛ\nɪɴꜰᴏ", f"status {sid} ov", position="header")
+        buttons.ibutton("ʙᴏᴛ\nɪɴꜰᴏ", f"status {sid} ov", position="header")
     if len(tasks) > STATUS_LIMIT:
         msg += f"<b>Page:</b> {page_no}/{pages} | <b>Tasks:</b> {tasks_no} | <b>Step:</b> {page_step}\n"
-        buttons.data_button("⫷", f"status {sid} pre", position="header")
-        buttons.data_button("⫸", f"status {sid} nex", position="header")
+        buttons.ibutton("⫷", f"status {sid} pre", position="header")
+        buttons.ibutton("⫸", f"status {sid} nex", position="header")
         if tasks_no > 30:
             for i in [1, 2, 4, 6, 8, 10, 15]:
-                buttons.data_button(i, f"status {sid} ps {i}", position="footer")
+                buttons.ibutton(i, f"status {sid} ps {i}", position="footer")
     if status != "All" or tasks_no > 20:
         for label, status_value in list(STATUSES.items())[:9]:
             if status_value != status:
-                buttons.data_button(label, f"status {sid} st {status_value}")
+                buttons.ibutton(label, f"status {sid} st {status_value}")
 
     button = buttons.build_menu(8)
     msg += (
