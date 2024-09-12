@@ -8,7 +8,7 @@ class _BotCommands:
         self.QbMirrorCommand = [f"qbmirror{CMD_SUFFIX}", f"qbm{CMD_SUFFIX}"]
         self.YtdlCommand = [f"ytdl{CMD_SUFFIX}", f"ytm{CMD_SUFFIX}"]
         self.LeechCommand = [f"leech{CMD_SUFFIX}", f"l{CMD_SUFFIX}"]
-        self.QbLeechCommand = [f"qbleech{CMD_SUFFIX}", f"qll{CMD_SUFFIX}"]
+        self.QbLeechCommand = [f"qbleech{CMD_SUFFIX}", f"qbl{CMD_SUFFIX}"]
         self.YtdlLeechCommand = [f"ytdlleech{CMD_SUFFIX}", f"ytl{CMD_SUFFIX}"]
         self.CloneCommand = [f"clone{CMD_SUFFIX}", f"c{CMD_SUFFIX}"]
         self.CountCommand = f"count{CMD_SUFFIX}"
