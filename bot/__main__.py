@@ -234,8 +234,8 @@ async def main():
         clean_all(),
         torrent_search.initiate_search_tools(),
         restart_notification(),
+        set_commands(bot),
     )
-    set_commands(bot)
     create_help_buttons()
     await sync_to_async(start_aria2_listener, wait=False)
 

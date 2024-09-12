@@ -1,11 +1,10 @@
 from time import time
 from html import escape
 from psutil import virtual_memory, cpu_percent, disk_usage
-from asyncio import iscoroutinefunction
 
 from bot import DOWNLOAD_DIR, task_dict, task_dict_lock, botStartTime, config_dict
 from bot.helper.telegram_helper.bot_commands import BotCommands
-from bot.heleper.telegram_helper.filters import CustomFilters
+from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.button_build import ButtonMaker
 
 SIZE_UNITS = ["B", "KB", "MB", "GB", "TB", "PB"]
@@ -100,17 +99,9 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
     button = None
 
     if status == "All":
-        tasks = (
-            [tk for tk in task_dict.values() if tk.listener.user_id == sid]
-            if is_user
-            else list(task_dict.values())
-        )
+        tasks = [tk for tk in task_dict.values() if tk.listener.user_id == sid] if is_user else list(task_dict.values())
     elif is_user:
-        tasks = [
-            tk
-            for tk in task_dict.values()
-            if tk.status() == status and tk.listener.user_id == sid
-        ]
+        tasks = [tk for tk in task_dict.values() if tk.status() == status and tk.listener.user_id == sid]
     else:
         tasks = [tk for tk in task_dict.values() if tk.status() == status]
 
@@ -123,26 +114,18 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
         page_no = pages - (abs(page_no) % pages)
     start_position = (page_no - 1) * STATUS_LIMIT
 
-    for index, task in enumerate(
-        tasks[start_position : STATUS_LIMIT + start_position], start=1
-    ):
+    for index, task in enumerate(tasks[start_position: STATUS_LIMIT + start_position], start=1):
         tstatus = task.status()
         user_tag = task.listener.tag.replace("@", "").replace("_", " ")
-        cancel_task = (f"<code>/{BotCommands.CancelTaskCommand} {task.gid()}</code>")
+        cancel_task = f"<b>/{BotCommands.CancelTaskCommand} {task.gid()}</b>"
+
         if CustomFilters.authorized:
-          if task.listener.is_super_chat:
-            msg += f"<pre><b>{escape(f'{task.name()}')}</b></pre>"
-          else:
-            msg += f"<pre><b>AUTHORIZED USER TASK 🔐</b></pre>"
-        if tstatus not in [
-            MirrorStatus.STATUS_SEEDING,
-            MirrorStatus.STATUS_QUEUEUP,
-        ]:
-          progress = (
-                await task.progress()
-                if iscoroutinefunction(task.progress)
-                else task.progress()
-            )
+            if task.listener.is_super_chat:
+                msg += f"<pre><b>{escape(f'{task.name()}')}</b></pre>"
+            else:
+                msg += f"<pre><b>AUTHORIZED USER TASK 🔐</b></pre>"
+
+        if tstatus not in [MirrorStatus.STATUS_SEEDING, MirrorStatus.STATUS_QUEUEUP]:
             msg += (
                 f"\n{get_progress_bar_string(progress)} » <b><i>{progress}</i></b>"
                 f"\n<code>Status :</code> <b>{tstatus}</b>"
@@ -171,37 +154,36 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
                 f"\n<code>Time   :</code> {task.seeding_time()}"
             )
         else:
-            msg += (
-                f"\n<code>Size   :</code> {task.size()}"
-            )
+            msg += f"\n<code>Size   :</code> {task.size()}"
         msg += f"\n<blockquote>{cancel_task}</blockquote>\n\n"
 
-    if len(msg) == 0 and status == "All":
-        return None, None
-    elif len(msg) == 0:
-        msg = f"No Active {status} Tasks!\n\n"
+    if len(msg) == 0:
+        if status == "All":
+            return None, None
+        else:
+            msg = f"No Active {status} Tasks!\n\n"
+
     buttons = ButtonMaker()
     if not is_user:
-        buttons.ibutton("ʙᴏᴛ\nɪɴꜰᴏ", "status 0 ov", position="header")
+        buttons.data_button("ʙᴏᴛ\nɪɴꜰᴏ", f"status {sid} ov", position="header")
     if len(tasks) > STATUS_LIMIT:
         msg += f"<b>Page:</b> {page_no}/{pages} | <b>Tasks:</b> {tasks_no} | <b>Step:</b> {page_step}\n"
-        buttons.ibutton("<<", f"status {sid} pre", position="header")
-        buttons.ibutton(">>", f"status {sid} nex", position="header")
+        buttons.data_button("⫷", f"status {sid} pre", position="header")
+        buttons.data_button("⫸", f"status {sid} nex", position="header")
         if tasks_no > 30:
-            for i in [1, 2, 4, 6, 8, 10, 15, 20]:
-                buttons.ibutton(i, f"status {sid} ps {i}", position="footer")
+            for i in [1, 2, 4, 6, 8, 10, 15]:
+                buttons.data_button(i, f"status {sid} ps {i}", position="footer")
     if status != "All" or tasks_no > 20:
-        for label, status_value in STATUS_VALUES:
+        for label, status_value in list(STATUSES.items())[:9]:
             if status_value != status:
-                buttons.ibutton(label, f"status {sid} st {status_value}")
+                buttons.data_button(label, f"status {sid} st {status_value}")
+
     button = buttons.build_menu(8)
     msg += (
-        "\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
+        "\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
         f"<b>CPU</b>: {cpu_percent()}% | "
         f"<b>FREE</b>: {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}\n"
         f"<b>RAM</b>: {virtual_memory().percent}% | "
         f"<b>UPTM</b>: {get_readable_time(time() - botStartTime)}"
     )
     return msg, button
-
-    

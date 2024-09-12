@@ -1,20 +1,23 @@
 from asyncio import sleep
+from re import search as re_search
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex
+from bot.helper.ext_utils.bot_utils import new_task
 
-from bot import task_dict, bot, task_dict_lock, OWNER_ID, user_data, multi_tags
+from bot import task_dict, bot, bot_name, task_dict_lock, OWNER_ID, user_data, multi_tags
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.message_utils import (
     sendMessage,
     auto_delete_message,
     deleteMessage,
+    editMessage,
 )
 from bot.helper.ext_utils.status_utils import getTaskByGid, getAllTasks, MirrorStatus
 from bot.helper.ext_utils.bot_utils import new_task
 from bot.helper.telegram_helper import button_build
 
-
+@new_task
 async def cancel_task(_, message):
     user_id = message.from_user.id if message.from_user else message.sender_chat.id
     msg = re_search(
@@ -64,7 +67,7 @@ async def cancel_task(_, message):
     obj = task.task()
     await obj.cancel_task()
 
-
+@new_task
 async def cancel_multi(_, query):
     data = query.data.split()
     user_id = query.from_user.id
@@ -80,7 +83,7 @@ async def cancel_multi(_, query):
     await query.answer(msg, show_alert=True)
     await deleteMessage(query.message)
 
-
+@new_task
 async def cancel_all(status):
     matches = await getAllTasks(status)
     if not matches:
@@ -91,7 +94,7 @@ async def cancel_all(status):
         await sleep(2)
     return True
 
-
+@new_task
 async def cancell_all_buttons(_, message):
     async with task_dict_lock:
         count = len(task_dict)

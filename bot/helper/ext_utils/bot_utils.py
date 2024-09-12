@@ -7,6 +7,7 @@ from asyncio import (
 )
 from asyncio.subprocess import PIPE
 from functools import partial, wraps
+from pyrogram.types import BotCommand
 from concurrent.futures import ThreadPoolExecutor
 from aiohttp import ClientSession
 
@@ -126,7 +127,7 @@ async def set_commands(client):
             "Periksa statistik bot."
         ),
         BotCommand(
-            f"{BotCommands.CancelTaskCommand[0]}",
+            f"{BotCommands.CancelTaskCommand}",
             "Batalkan tugas."
         ),
         BotCommand(

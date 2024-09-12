@@ -242,12 +242,12 @@ class TaskListener(TaskConfig):
             msg += f"\n<b>Total Files: </b>{folders}"
             if mime_type != 0:
                 msg += f"\n<b>Corrupted Files: </b>{mime_type}"
-            msg += f"\n<b>cc: </b>{self.tag}\n\n"
             if not files:
-              msg += f"<b><i>Files has been sent to your DM.</i></b>"
-                await sendMessage(self.message, msg)
+                msg += f"\n<b><i>Files has been sent to your DM.</i></b>"
+                await send_message(self.message, msg)
             else:
-              msg += f"<b><i>Files has been sent to your DC.</i></b>"
+                msg += f"\n<b><i>Files has been sent to your DC.</i></b>"
+                await send_message(self.message, msg)
             if self.seed:
                 if self.newDir:
                     await clean_target(self.newDir)

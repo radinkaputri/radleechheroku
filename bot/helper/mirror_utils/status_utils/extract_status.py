@@ -16,6 +16,7 @@ class ExtractStatus:
         self._gid = gid
         self._start_time = time()
         self.listener = listener
+        self.engine = "7Zip"
 
     def gid(self):
         return self._gid
