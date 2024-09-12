@@ -18,7 +18,7 @@ from psutil import (
 )
 
 from .helper.ext_utils.files_utils import clean_all, exit_clean_up
-from .helper.ext_utils.bot_utils import cmd_exec, sync_to_async, create_help_buttons
+from .helper.ext_utils.bot_utils import cmd_exec, sync_to_async, create_help_buttons, set_commands
 from .helper.ext_utils.status_utils import get_readable_file_size, get_readable_time
 from .helper.ext_utils.db_handler import DbManger
 from .helper.telegram_helper.bot_commands import BotCommands
@@ -92,7 +92,7 @@ async def stats(_, message):
 async def start(client, message):
     buttons = ButtonMaker()
     buttons.ubutton("Repo", "https://github.com/xyrad-bot/zymltb")
-    buttons.ubutton("Owner", "https://t.me/xyradelw")
+    buttons.ubutton("Owner", "https://t.me/u_xzyp")
     reply_markup = buttons.build_menu(2)
     if await CustomFilters.authorized(client, message):
         start_string = f"""
@@ -235,6 +235,7 @@ async def main():
         torrent_search.initiate_search_tools(),
         restart_notification(),
     )
+    set_commands(bot)
     create_help_buttons()
     await sync_to_async(start_aria2_listener, wait=False)
 

@@ -233,7 +233,10 @@ class TaskListener(TaskConfig):
             and DATABASE_URL
         ):
             await DbManger().rm_complete_task(self.message.link)
-        msg = f"<blockquote><b>Name: </b><code>{escape(self.name)}</code></blockquote>\n\n<b>Size: </b>{get_readable_file_size(size)}"
+        msg = (
+          f"<b><i>{escape(self.name)}</i></b>\n\n"
+          f"<b>Size: </b>{get_readable_file_size(self.size)}"
+          )
         LOGGER.info(f"Task Done: {self.name}")
         if self.isLeech:
             msg += f"\n<b>Total Files: </b>{folders}"
@@ -241,17 +244,10 @@ class TaskListener(TaskConfig):
                 msg += f"\n<b>Corrupted Files: </b>{mime_type}"
             msg += f"\n<b>cc: </b>{self.tag}\n\n"
             if not files:
+              msg += f"<b><i>Files has been sent to your DM.</i></b>"
                 await sendMessage(self.message, msg)
             else:
-                fmsg = ""
-                for index, (link, name) in enumerate(files.items(), start=1):
-                    fmsg += f"{index}. <a href='{link}'>{name}</a>\n"
-                    if len(fmsg.encode() + msg.encode()) > 4000:
-                        await sendMessage(self.message, msg + fmsg)
-                        await sleep(1)
-                        fmsg = ""
-                if fmsg != "":
-                    await sendMessage(self.message, msg + fmsg)
+              msg += f"<b><i>Files has been sent to your DC.</i></b>"
             if self.seed:
                 if self.newDir:
                     await clean_target(self.newDir)

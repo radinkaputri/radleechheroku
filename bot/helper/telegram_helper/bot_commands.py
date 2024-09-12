@@ -5,15 +5,15 @@ class _BotCommands:
     def __init__(self):
         self.StartCommand = f"start{CMD_SUFFIX}"
         self.MirrorCommand = [f"mirror{CMD_SUFFIX}", f"m{CMD_SUFFIX}"]
-        self.QbMirrorCommand = [f"qbmirror{CMD_SUFFIX}", f"qm{CMD_SUFFIX}"]
-        self.YtdlCommand = [f"ytdl{CMD_SUFFIX}", f"y{CMD_SUFFIX}"]
+        self.QbMirrorCommand = [f"qbmirror{CMD_SUFFIX}", f"qbm{CMD_SUFFIX}"]
+        self.YtdlCommand = [f"ytdl{CMD_SUFFIX}", f"ytm{CMD_SUFFIX}"]
         self.LeechCommand = [f"leech{CMD_SUFFIX}", f"l{CMD_SUFFIX}"]
-        self.QbLeechCommand = [f"qbleech{CMD_SUFFIX}", f"ql{CMD_SUFFIX}"]
-        self.YtdlLeechCommand = [f"ytdlleech{CMD_SUFFIX}", f"yl{CMD_SUFFIX}"]
+        self.QbLeechCommand = [f"qbleech{CMD_SUFFIX}", f"qll{CMD_SUFFIX}"]
+        self.YtdlLeechCommand = [f"ytdlleech{CMD_SUFFIX}", f"ytl{CMD_SUFFIX}"]
         self.CloneCommand = [f"clone{CMD_SUFFIX}", f"c{CMD_SUFFIX}"]
         self.CountCommand = f"count{CMD_SUFFIX}"
         self.DeleteCommand = f"del{CMD_SUFFIX}"
-        self.CancelTaskCommand = f"cancel{CMD_SUFFIX}"
+        self.CancelTaskCommand = f"abort{CMD_SUFFIX}"
         self.CancelAllCommand = f"cancelall{CMD_SUFFIX}"
         self.ListCommand = f"list{CMD_SUFFIX}"
         self.SearchCommand = f"search{CMD_SUFFIX}"

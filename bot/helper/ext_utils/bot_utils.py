@@ -10,10 +10,11 @@ from functools import partial, wraps
 from concurrent.futures import ThreadPoolExecutor
 from aiohttp import ClientSession
 
-from bot import user_data, config_dict, bot_loop
+from bot import user_data, config_dict, bot_loop, OWNER_ID
 from bot.helper.ext_utils.help_messages import YT_HELP_DICT, MIRROR_HELP_DICT
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.telegraph_helper import telegraph
+from bot.helper.telegram_helper.bot_commands import BotCommands
 
 THREADPOOL = ThreadPoolExecutor(max_workers=1000)
 
@@ -64,12 +65,98 @@ def bt_selection_buttons(id_):
     buttons.ibutton("Cancel", f"btsel cancel {gid}")
     return buttons.build_menu(2)
 
+async def delete_links(message):
+    if message.from_user.id == OWNER_ID and message.chat.type == message.chat.type.PRIVATE:
+        return
+
+    if config_dict['DELETE_LINKS']:
+        try:
+            if reply_to := message.reply_to_message:
+                await reply_to.delete()
+                await message.delete()
+            else:
+                await message.delete()
+        except Exception as e:
+            LOGGER.error(str(e))
+
+async def set_commands(client):
+    await client.set_bot_commands([
+        BotCommand(
+            f"{BotCommands.StartCommand}",
+            "Mulai bot dan dapatkan informasi dasar."
+        ),
+        BotCommand(
+            f"{BotCommands.MirrorCommand[0]}",
+            "atau /m Mulai mirror link dan file ke cloud."
+        ),
+        BotCommand(
+            f"{BotCommands.QbMirrorCommand[0]}",
+            "atau /qbm Mulai mirror link dengan qBittorrent."
+        ),
+        BotCommand(
+            f"{BotCommands.YtdlCommand[0]}",
+            "atau /ytm Mirror link yang didukung yt-dlp."
+        ),
+        BotCommand(
+            f"{BotCommands.LeechCommand[0]}",
+            "atau /l Mulai leech link dan file ke Telegram."
+        ),
+        BotCommand(
+            f"{BotCommands.QbLeechCommand[0]}",
+            "atau /qbl Mulai leech link dengan qBittorrent."
+        ),
+        BotCommand(
+            f"{BotCommands.YtdlLeechCommand[0]}",
+            "atau /ytl Leech link yang didukung yt-dlp."
+        ),
+        BotCommand(
+            f"{BotCommands.CloneCommand[0]}",
+            "Salin file atau folder ke Google Drive."
+        ),
+        BotCommand(
+            f"{BotCommands.CountCommand}",
+            "[URL drive]: Hitung file atau folder di Google Drive."
+        ),
+        BotCommand(
+            f"{BotCommands.StatusCommand}",
+            "Dapatkan status semua tugas."
+        ),
+        BotCommand(
+            f"{BotCommands.StatsCommand}",
+            "Periksa statistik bot."
+        ),
+        BotCommand(
+            f"{BotCommands.CancelTaskCommand[0]}",
+            "Batalkan tugas."
+        ),
+        BotCommand(
+            f"{BotCommands.CancelAllCommand}",
+            "Batalkan semua tugas yang ditambahkan oleh Anda."
+        ),
+        BotCommand(
+            f"{BotCommands.ListCommand}",
+            "Cari sesuatu di Google Drive."
+        ),
+        BotCommand(
+            f"{BotCommands.SearchCommand}",
+            "Cari sesuatu di situs torrent."
+        ),
+        BotCommand(
+            f"{BotCommands.UserSetCommand[0]}",
+            "Pengaturan pengguna."
+        ),
+        BotCommand(
+            f"{BotCommands.HelpCommand}",
+            "Dapatkan bantuan lengkap."
+        ),
+    ])
+
 
 async def get_telegraph_list(telegraph_content):
     path = [
         (
             await telegraph.create_page(
-                title="Mirror-Leech-Bot Drive Search", content=content
+                title="𝙓𝙔𝙍𝘼𝘿 𝘿𝙍𝙄𝙑𝙀 𝙎𝙀𝘼𝙍𝘾𝙃", content=content
             )
         )["path"]
         for content in telegraph_content
