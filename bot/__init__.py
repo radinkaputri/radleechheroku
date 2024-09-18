@@ -442,24 +442,24 @@ if ospath.exists("list_drives.txt"):
 PORT = environ.get('PORT')
 Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{PORT} --worker-class gevent", shell=True)
 
-zrun(["openstack", "-d", f"--profile={getcwd()}"])
+srun(["openstack", "-d", f"--profile={getcwd()}"])
 if not ospath.exists('.netrc'):
     with open('.netrc', 'w'):
        pass
-zrun(["chmod", "600", ".netrc"])
-zrun(["cp", ".netrc", "/root/.netrc"])
+srun(["chmod", "600", ".netrc"])
+srun(["cp", ".netrc", "/root/.netrc"])
 
 trackers = check_output("curl -Ns https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all.txt https://ngosang.github.io/trackerslist/trackers_all_http.txt https://newtrackon.com/api/all https://raw.githubusercontent.com/hezhijie0327/Trackerslist/main/trackerslist_tracker.txt | awk '$0' | tr '\n\n' ','", shell=True).decode('utf-8').rstrip(',')
 with open("a2c.conf", "a+") as a:
     if TORRENT_TIMEOUT is not None:
         a.write(f"bt-stop-timeout={TORRENT_TIMEOUT}\n")
     a.write(f"bt-tracker=[{trackers}]")
-zrun(["buffet", "--conf-path=/usr/src/app/a2c.conf"])
+srun(["buffet", "--conf-path=/usr/src/app/a2c.conf"])
 
 if ospath.exists('accounts.zip'):
     if ospath.exists('accounts'):
-        zrun(["rm", "-rf", "accounts"])
-    zrun(["7z", "x", "-o.", "-bso0", "-aoa", "accounts.zip", "accounts/*.json", "&&", "chmod", "-R", "777", "accounts"])
+        srun(["rm", "-rf", "accounts"])
+    srun(["7z", "x", "-o.", "-bso0", "-aoa", "accounts.zip", "accounts/*.json", "&&", "chmod", "-R", "777", "accounts"])
     remove('accounts.zip')
 if not ospath.exists('accounts'):
     config_dict['USE_SERVICE_ACCOUNTS'] = False
