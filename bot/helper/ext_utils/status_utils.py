@@ -127,7 +127,7 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
 
         if tstatus not in [MirrorStatus.STATUS_SEEDING, MirrorStatus.STATUS_QUEUEUP]:
             msg += (
-                f"\n{get_progress_bar_string(task.progress())} {task.progress()}"
+                f"\n{get_progress_bar_string(task.progress())} ➜ {task.progress()}"
                 f"\n<code>Status :</code> <b>{tstatus}</b>"
                 f"\n<code>Size   :</code> {task.size()}"
                 f"\n<code>Done   :</code> {task.processed_bytes()}"
@@ -168,8 +168,8 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
         buttons.ibutton("ʙᴏᴛ\nɪɴꜰᴏ", f"status {sid} ov", position="header")
     if len(tasks) > STATUS_LIMIT:
         msg += f"<b>Page:</b> {page_no}/{pages} | <b>Tasks:</b> {tasks_no} | <b>Step:</b> {page_step}\n"
-        buttons.ibutton("⫷", f"status {sid} pre", position="header")
-        buttons.ibutton("⫸", f"status {sid} nex", position="header")
+        buttons.ibutton("⫷", f"status {sid} pre")
+        buttons.ibutton("⫸", f"status {sid} nex")
         if tasks_no > 30:
             for i in [1, 2, 4, 6, 8, 10, 15]:
                 buttons.ibutton(i, f"status {sid} ps {i}", position="footer")
