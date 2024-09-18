@@ -127,7 +127,7 @@ async def set_commands(client):
             "Periksa statistik bot."
         ),
         BotCommand(
-            f"{BotCommands.CancelTaskCommand}",
+            f"{BotCommands.CancelTaskCommand[0]}",
             "Batalkan tugas."
         ),
         BotCommand(
@@ -149,6 +149,10 @@ async def set_commands(client):
         BotCommand(
             f"{BotCommands.HelpCommand}",
             "Dapatkan bantuan lengkap."
+        ),
+        BotCommand(
+            f"{BotCommands.SpeedCommand}",
+            "Periksa seberapa cepat internetmu."
         ),
     ])
 

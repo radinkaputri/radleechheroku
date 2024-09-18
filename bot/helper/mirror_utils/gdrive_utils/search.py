@@ -1,6 +1,6 @@
 from logging import getLogger
 
-from bot import DRIVES_NAMES, DRIVES_IDS, INDEX_URLS, user_data
+from bot import DRIVES_NAMES, DRIVES_IDS, INDEX_URLS, user_data, config_dict
 from bot.helper.ext_utils.status_utils import get_readable_file_size
 from bot.helper.mirror_utils.gdrive_utils.helper import GoogleDriveHelper
 
@@ -93,7 +93,7 @@ class gdSearch(GoogleDriveHelper):
             return {"files": []}
 
     def drive_list(self, fileName, target_id="", user_id=""):
-        msg = ""
+        msg = f"""<figure><img src='{config_dict["COVER_IMAGES"]}'></figure>"""
         fileName = self.escapes(str(fileName))
         contents_no = 0
         telegraph_content = []
@@ -140,10 +140,11 @@ class gdSearch(GoogleDriveHelper):
                 if mime_type == self.G_DRIVE_DIR_MIME_TYPE:
                     furl = self.G_DRIVE_DIR_BASE_DOWNLOAD_URL.format(file.get("id"))
                     msg += f"📁 <code>{file.get('name')}<br>(folder)</code><br>"
-                    msg += f"<b><a href={furl}>Drive Link</a></b>"
+                    if not config_dict["DISABLE_DRIVE_LINK"]:
+                      msg += f"<b><a href='{furl}'>Drive Link</a> </b>"
                     if index_url:
                         url = f'{index_url}findpath?id={file.get("id")}'
-                        msg += f' <b>| <a href="{url}">Direct Link</a></b>'
+                        msg += f' <b>- <a href="{url}">Direct Link</a></b>'
                 elif mime_type == "application/vnd.google-apps.shortcut":
                     furl = self.G_DRIVE_DIR_BASE_DOWNLOAD_URL.format(file.get("id"))
                     msg += (
@@ -153,13 +154,14 @@ class gdSearch(GoogleDriveHelper):
                 else:
                     furl = self.G_DRIVE_BASE_DOWNLOAD_URL.format(file.get("id"))
                     msg += f"📄 <code>{file.get('name')}<br>({get_readable_file_size(int(file.get('size', 0)))})</code><br>"
-                    msg += f"<b><a href={furl}>Drive Link</a></b>"
+                    if not config_dict["DISABLE_DRIVE_LINK"]:
+                      msg += f"<b><a href='{furl}'>Drive Link</a> </b>"
                     if index_url:
                         url = f'{index_url}findpath?id={file.get("id")}'
-                        msg += f' <b>| <a href="{url}">Direct Link</a></b>'
+                        msg += f' <b>- <a href="{url}">Direct Link</a></b>'
                         if mime_type.startswith(("image", "video", "audio")):
                             urlv = f'{index_url}findpath?id={file.get("id")}&view=true'
-                            msg += f' <b>| <a href="{urlv}">Stream Link</a></b>'
+                            msg += f' <b>- <a href="{urlv}">Stream Link</a></b>'
                 msg += "<br><br>"
                 contents_no += 1
                 if len(msg.encode("utf-8")) > 39000:
@@ -168,7 +170,7 @@ class gdSearch(GoogleDriveHelper):
             if self._noMulti:
                 break
 
-        if msg != "":
+        if msg != f"""<figure><img src='{config_dict["COVER_IMAGES"]}'></figure>""":
             telegraph_content.append(msg)
 
         return telegraph_content, contents_no
