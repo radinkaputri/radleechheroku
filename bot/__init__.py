@@ -499,7 +499,7 @@ bot = tgClient('bot',
 
 bot_loop = bot.loop
 bot_name = bot.me.username
-info(f"Starting Bot @{bot_name}...")
+log_info(f"Starting Bot @{bot_name}...")
 scheduler = AsyncIOScheduler(timezone=str(get_localzone()), event_loop=bot_loop)
 
 if not aria2_options:
