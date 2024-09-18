@@ -7,7 +7,7 @@ class SampleVideoStatus:
         self._gid = gid
         self._size = size
         self.listener = listener
-        seld.engine = "FFmpeg"
+        self.engine = "FFmpeg"
 
     def gid(self):
         return self._gid

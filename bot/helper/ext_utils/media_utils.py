@@ -182,7 +182,7 @@ async def get_audio_thumb(audio_file):
     await makedirs(des_dir, exist_ok=True)
     des_dir = f"Thumbnails/{time()}.jpg"
     cmd = [
-        "ffmpeg",
+        "render",
         "-hide_banner",
         "-loglevel",
         "error",
@@ -212,7 +212,7 @@ async def create_thumbnail(video_file, duration):
         duration = 3
     duration = duration // 2
     cmd = [
-        "ffmpeg",
+        "render",
         "-hide_banner",
         "-loglevel",
         "error",
@@ -261,7 +261,7 @@ async def split_file(
         while i <= parts or start_time < duration - 4:
             out_path = f"{base_name}.part{i:03}{extension}"
             cmd = [
-                "ffmpeg",
+                "render",
                 "-hide_banner",
                 "-loglevel",
                 "error",
@@ -407,7 +407,7 @@ async def createSampleVideo(
     filter_complex += f"concat=n={len(segments)}:v=1:a=1[vout][aout]"
 
     cmd = [
-        "ffmpeg",
+        "render",
         "-i",
         video_file,
         "-filter_complex",

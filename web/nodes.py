@@ -76,7 +76,7 @@ def make_tree(res, aria2=False):
 
 """
 def print_tree(parent):
-    for pre, _, node in RenderTree(parent):
+    for pre, _, node in FFmpegTree(parent):
         treestr = u"%s%s" % (pre, node.name)
         print(treestr.ljust(8), node.is_folder, node.is_file)
 """
