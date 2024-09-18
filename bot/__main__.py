@@ -28,6 +28,7 @@ from .helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.listeners.aria2_listener import start_aria2_listener
 from bot import (
     bot,
+    bot_name,
     botStartTime,
     LOGGER,
     Interval,
@@ -92,21 +93,27 @@ async def stats(_, message):
 
 async def start(client, message):
     buttons = ButtonMaker()
-    buttons.ubutton("Repo", "https://github.com/xyrad-bot/zymltb")
-    buttons.ubutton("Owner", "https://t.me/u_xzyp")
+    buttons.ubutton("ʙᴏᴛ\nᴏᴡɴᴇʀ", "https://t.me/u_xzyp")
+    
+    is_authorized = await CustomFilters.authorized(client, message)
+    status = "Authorize: ✅" if is_authorized else "Authorize: ❌"
+
+    if not is_authorized:
+        buttons.ubutton("ʙᴏᴛ\nʀᴇᴘᴏ", "https://github.com/xyrad-bot/zymltb")
+        
     reply_markup = buttons.build_menu(2)
-    if await CustomFilters.authorized(client, message):
-        start_string = f"""
-Aku sudah aktif selama {get_readable_time(time() - botStartTime)}
-ketik /{BotCommands.HelpCommand} untuk membuka bantuan selengkapnya
+
+    start_string = f"""
+<b>Hello, I am {bot_name}</b>
+
+I can help you mirror links, files, or torrents to Google Drive, rclone cloud, or Telegram.
+Type /{BotCommands.HelpCommand} to see the list of commands.
+
+<b>Uptime: {get_readable_time(time() - botStartTime)}</b>
+<b>{status}</b>
 """
-        await sendMessage(message, start_string, reply_markup)
-    else:
-        await sendMessage(
-            message,
-            "Hi❓, sayangnya kamu gapunya otoritas untuk memanggilku di pm, makasih ",
-            reply_markup,
-        )
+
+    await sendMessage(message, start_string, reply_markup)
 
 
 async def restart(_, message):
