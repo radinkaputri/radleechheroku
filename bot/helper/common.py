@@ -21,7 +21,7 @@ from bot import (
     subprocess_lock,
 )
 from bot.helper.telegram_helper.bot_commands import BotCommands
-from bot.helper.ext_utils.bot_utils import new_task, sync_to_async, safemode_message
+from bot.helper.ext_utils.bot_utils import new_task, sync_to_async
 from bot.helper.ext_utils.links_utils import (
     is_gdrive_id,
     is_rclone_path,
@@ -90,7 +90,6 @@ class TaskConfig:
         self.privateLink = False
         self.stopDuplicate = False
         self.sampleVideo = False
-        self.safemode_msg = safemode_message()
         self.screenShots = False
         self.as_doc = False
         self.suproc = None
