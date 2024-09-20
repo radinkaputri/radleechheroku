@@ -125,7 +125,7 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
             msg += f"<pre><a href='{task.listener.message.link}'>{tstatus}</a>: "
             msg += f"{escape(f'{task.name()}')}</pre>"
 
-        if tstatus not in [MirrorStatus.STATUS_SEEDING, MirrorStatus.STATUS_QUEUEUP, MirrorStatus.Status.STATUS_SPLITTING]:
+        if tstatus not in [MirrorStatus.STATUS_SEEDING, MirrorStatus.STATUS_QUEUEUP, MirrorStatus.STATUS_SPLITTING]:
             msg += (
                 f"\n{get_progress_bar_string(task.progress())} ➜ {task.progress()}"
                 f"\n<code>Size   :</code> {task.size()}"
