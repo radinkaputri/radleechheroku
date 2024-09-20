@@ -233,15 +233,8 @@ class TaskListener(TaskConfig):
             and DATABASE_URL
         ):
             await DbManger().rm_complete_task(self.message.link)
- 
-        task_name = (
-          f"<b><i>Task has been completed!</i></b>"
-          if config_dict['SAFE_MODE']
-          else f"<b><i>{escape(self.name)}</i></b>"
-          )
-
         msg = (
-          f"{task_name}\n"
+          f"<b><i>{escape(self.name)}</i></b>\n"
           f"\n<code>Size   : </code>{get_readable_file_size(size)}"
           f"\n<code>User   : </code>{self.tag}"
           f"\n<code>UserID : </code>{self.message.from_user.id}"
