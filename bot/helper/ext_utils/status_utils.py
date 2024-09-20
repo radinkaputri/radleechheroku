@@ -10,18 +10,18 @@ from bot.helper.telegram_helper.button_build import ButtonMaker
 SIZE_UNITS = ["B", "KB", "MB", "GB", "TB", "PB"]
 
 class MirrorStatus:
-    STATUS_UPLOADING = "Upload 📤"
-    STATUS_DOWNLOADING = "Download 📥"
-    STATUS_CLONING = "Clone 🧬"
-    STATUS_QUEUEDL = "QueueDl ⏳"
-    STATUS_QUEUEUP = "QueueUp ⏳"
-    STATUS_PAUSED = "Pause ⏸️"
-    STATUS_ARCHIVING = "Archive 🗃️"
-    STATUS_EXTRACTING = "Extract 📂"
-    STATUS_SPLITTING = "Split ✂️"
-    STATUS_CHECKING = "CheckUp 🔍"
-    STATUS_SEEDING = "Seed 🌱"
-    STATUS_SAMVID = "SamVid 🎥"
+    STATUS_UPLOADING = "Upload"
+    STATUS_DOWNLOADING = "Download"
+    STATUS_CLONING = "Clone"
+    STATUS_QUEUEDL = "QueueDl"
+    STATUS_QUEUEUP = "QueueUp"
+    STATUS_PAUSED = "Pause"
+    STATUS_ARCHIVING = "Archive"
+    STATUS_EXTRACTING = "Extract"
+    STATUS_SPLITTING = "Split"
+    STATUS_CHECKING = "CheckUp"
+    STATUS_SEEDING = "Seed"
+    STATUS_SAMVID = "SamVid"
 
 STATUSES = {
     "ALL": "All",
@@ -120,12 +120,12 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
         cancel_task = f"<b>/{BotCommands.CancelTaskCommand[0]}_{task.gid()}</b>"
 
         if config_dict['SAFE_MODE']:
-            msg += f"<b>{tstatus}: Hang on bitch! your task is in progress..</b>"
+            msg += f"<pre>{tstatus}: Hang on bitch! your task is in progress..</pre>"
         else:
-            msg += f"<b><a href='{task.listener.message.link}'>{tstatus}</a>: </b>"
-            msg += f"<code>{escape(f'{task.name()}')}</code>"
+            msg += f"<pre><a href='{task.listener.message.link}'>{tstatus}</a>: "
+            msg += f"{escape(f'{task.name()}')}</pre>"
 
-        if tstatus not in [MirrorStatus.STATUS_SEEDING, MirrorStatus.STATUS_QUEUEUP]:
+        if tstatus not in [MirrorStatus.STATUS_SEEDING, MirrorStatus.STATUS_QUEUEUP, MirrorStatus.Status.STATUS_SPLITTING]:
             msg += (
                 f"\n{get_progress_bar_string(task.progress())} ➜ {task.progress()}"
                 f"\n<code>Size   :</code> {task.size()}"
