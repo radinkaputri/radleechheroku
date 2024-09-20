@@ -119,16 +119,15 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
         user_tag = task.listener.tag.replace("@", "").replace("_", " ")
         cancel_task = f"<b>/{BotCommands.CancelTaskCommand[0]}_{task.gid()}</b>"
 
-        if CustomFilters.authorized:
-            if task.listener.isSuperChat:
-                msg += f"<pre><b>{escape(f'{task.name()}')}</b></pre>"
-            else:
-                msg += f"<pre><b>AUTHORIZED USER TASK 🔐</b></pre>"
+        if config_dict['SAFE_MODE']:
+            msg += f"<b>{tstatus}: Hang on bitch! your task is in progress..</b>"
+        else:
+            msg += f"<b><a href='{task.listener.message.link}'>{tstatus}</a>: </b>"
+            msg += f"<code>{escape(f'{task.name()}')}</code>"
 
         if tstatus not in [MirrorStatus.STATUS_SEEDING, MirrorStatus.STATUS_QUEUEUP]:
             msg += (
                 f"\n{get_progress_bar_string(task.progress())} ➜ {task.progress()}"
-                f"\n<code>Status :</code> <b>{tstatus}</b>"
                 f"\n<code>Size   :</code> {task.size()}"
                 f"\n<code>Done   :</code> {task.processed_bytes()}"
                 f"\n<code>Speed  :</code> {task.speed()}"

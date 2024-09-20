@@ -291,6 +291,11 @@ if LEECH_DUMP_CHAT.isdigit() or LEECH_DUMP_CHAT.startswith("-"):
 STATUS_LIMIT = environ.get("STATUS_LIMIT", "")
 STATUS_LIMIT = 10 if len(STATUS_LIMIT) == 0 else int(STATUS_LIMIT)
 
+SAFE_MODE = environ.get('SAFE_MODE', '')
+if len(SAFE_MODE) == 0:
+    log_warning('SAFE_MODE Is Not Enabled')
+    SAFE_MODE = ''
+
 CMD_SUFFIX = environ.get("CMD_SUFFIX", "")
 
 RSS_CHAT = environ.get("RSS_CHAT", "")
@@ -414,6 +419,7 @@ config_dict = {
     "RCLONE_SERVE_PORT": RCLONE_SERVE_PORT,
     "RSS_CHAT": RSS_CHAT,
     "RSS_DELAY": RSS_DELAY,
+    "SAFE_MODE": SAFE_MODE,
     "SEARCH_API_LINK": SEARCH_API_LINK,
     "SEARCH_LIMIT": SEARCH_LIMIT,
     "SEARCH_PLUGINS": SEARCH_PLUGINS,
