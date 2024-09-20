@@ -120,7 +120,7 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
         cancel_task = f"<b>/{BotCommands.CancelTaskCommand[0]}_{task.gid()}</b>"
 
         if config_dict['SAFE_MODE']:
-            msg += f"<pre>{tstatus}: Hang on bitch! your task is in progress..</pre>"
+            msg += f"<pre>{tstatus}: {task.safemode_msg}..</pre>"
         else:
             msg += f"<pre><a href='{task.listener.message.link}'>{tstatus}</a>: "
             msg += f"{escape(f'{task.name()}')}</pre>"
