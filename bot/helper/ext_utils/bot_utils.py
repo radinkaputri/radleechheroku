@@ -84,75 +84,75 @@ async def set_commands(client):
     await client.set_bot_commands([
         BotCommand(
             f"{BotCommands.StartCommand}",
-            "Mulai bot dan dapatkan informasi dasar."
+            "Start the bot and get basic information."
         ),
         BotCommand(
             f"{BotCommands.MirrorCommand[0]}",
-            "atau /m Mulai mirror link dan file ke cloud."
+            f"or /{BotCommands.MirrorCommand[1]} to mirror links and files to the cloud."
         ),
         BotCommand(
             f"{BotCommands.QbMirrorCommand[0]}",
-            "atau /qbm Mulai mirror link dengan qBittorrent."
+            f"or /{BotCommands.QbMirrorCommand[1]} to mirror links with qBittorrent."
         ),
         BotCommand(
             f"{BotCommands.YtdlCommand[0]}",
-            "atau /ytm Mirror link yang didukung yt-dlp."
+            f"or /{BotCommands.YtdlCommand[1]} to mirror links supported by yt-dlp."
         ),
         BotCommand(
             f"{BotCommands.LeechCommand[0]}",
-            "atau /l Mulai leech link dan file ke Telegram."
+            f"or /{BotCommands.LeechCommand[1]} to leech links and files to Telegram."
         ),
         BotCommand(
             f"{BotCommands.QbLeechCommand[0]}",
-            "atau /qbl Mulai leech link dengan qBittorrent."
+            f"or /{BotCommands.QbLeechCommand[1]} to leech links using qBittorrent."
         ),
         BotCommand(
             f"{BotCommands.YtdlLeechCommand[0]}",
-            "atau /ytl Leech link yang didukung yt-dlp."
+            f"or /{BotCommands.YtdlLeechCommand[1]} to leech links supported by yt-dlp."
         ),
         BotCommand(
             f"{BotCommands.CloneCommand[0]}",
-            "Salin file atau folder ke Google Drive."
+            f"or /{BotCommands.CloneCommand[1]} to copy files or folders to Google Drive."
         ),
         BotCommand(
             f"{BotCommands.CountCommand}",
-            "[URL drive]: Hitung file atau folder di Google Drive."
+            "[Drive URL]: to count files or folders in Google Drive."
         ),
         BotCommand(
             f"{BotCommands.StatusCommand}",
-            "Dapatkan status semua tugas."
+            "to get the status of all tasks."
         ),
         BotCommand(
             f"{BotCommands.StatsCommand}",
-            "Periksa statistik bot."
+            "to check bot statistics."
         ),
         BotCommand(
             f"{BotCommands.CancelTaskCommand[0]}",
-            "Batalkan tugas."
+            f"or /{BotCommands.CancelTaskCommand[1]} to cancel a task."
         ),
         BotCommand(
             f"{BotCommands.CancelAllCommand}",
-            "Batalkan semua tugas yang ditambahkan oleh Anda."
+            "to cancel all tasks added by you."
         ),
         BotCommand(
             f"{BotCommands.ListCommand}",
-            "Cari sesuatu di Google Drive."
+            "to search for something in Google Drive."
         ),
         BotCommand(
             f"{BotCommands.SearchCommand}",
-            "Cari sesuatu di situs torrent."
+            "to search for something on torrent sites."
         ),
         BotCommand(
             f"{BotCommands.UserSetCommand[0]}",
-            "Pengaturan pengguna."
+            f"or /{BotCommands.UserSetCommand[1]} to access user settings."
         ),
         BotCommand(
             f"{BotCommands.HelpCommand}",
-            "Dapatkan bantuan lengkap."
+            "to get complete assistance."
         ),
         BotCommand(
             f"{BotCommands.SpeedCommand}",
-            "Periksa seberapa cepat internetmu."
+            "Check the speed of the bot's host."
         ),
     ])
 
