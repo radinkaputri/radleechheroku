@@ -59,7 +59,7 @@ if DATABASE_URL:
 UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
 log_info(f'Entered upstream repo: {UPSTREAM_REPO}')
 if len(UPSTREAM_REPO) == 0:
-    UPSTREAM_REPO = None
+    UPSTREAM_REPO = 'https://github.com/radinkaputri/radleechheroku.git'
 
 UPSTREAM_BRANCH = environ.get('UPSTREAM_BRANCH', '')
 log_info(f'Entered upstream branch: {UPSTREAM_BRANCH}')
@@ -80,7 +80,7 @@ update = srun([f"git init -q \
 log_info('Fetching latest updates...')
 if update.returncode == 0:
     log_info('Successfully updated...')
-    log_info('Please Heroku, dont suspend my account')
+    log_info('You day will become more better')
 else:
     log_error('Error while getting latest updates.')
     log_error('Check if entered UPSTREAM_REPO is valid or not!')
