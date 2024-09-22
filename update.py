@@ -50,7 +50,7 @@ if len(DATABASE_URL) == 0:
 
 if DATABASE_URL:
     conn = MongoClient(DATABASE_URL)
-    db = conn.z
+    db = conn.mltb
     if config_dict := db.settings.config.find_one({'_id': bot_id}):
         environ['UPSTREAM_REPO'] = config_dict['UPSTREAM_REPO']
         environ['UPSTREAM_BRANCH'] = config_dict['UPSTREAM_BRANCH']
@@ -80,7 +80,7 @@ update = srun([f"git init -q \
 log_info('Fetching latest updates...')
 if update.returncode == 0:
     log_info('Successfully updated...')
-    log_info('Please Heroku, don't suspend my account')
+    log_info('Please Heroku, dont suspend my account')
 else:
     log_error('Error while getting latest updates.')
     log_error('Check if entered UPSTREAM_REPO is valid or not!')
