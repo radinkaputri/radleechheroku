@@ -249,8 +249,16 @@ class TaskListener(TaskConfig):
                 msg += f"\n\n<b><i>Files has been sent to your DM.</i></b>"
                 await sendMessage(self.message, msg)
             else:
-                msg += f"\n\n<b><i>Files has been sent to your DC.</i></b>"
-                await sendMessage(self.message, msg)
+                buttons = ButtonMaker()
+                for link, name in files.items():
+                  if link:
+                    msg += f"\n\n<b><i>Files has been sent to destination.</i></b>"
+                    buttons.ubutton(f"ᴏᴘᴇɴ ᴅᴜᴍᴘ ᴄʜᴀᴛ 📥", link, "header")
+                    break
+                if buttons:
+                  button = buttons.build_menu(1)
+                  await sendMessage(self.message, msg, button)
+
             if self.seed:
                 if self.newDir:
                     await clean_target(self.newDir)
@@ -276,7 +284,7 @@ class TaskListener(TaskConfig):
                   if link.startswith("https://drive.google.com/") and not config_dict["DISABLE_DRIVE_LINK"]:
                     buttons.ubutton("ᴅʀɪᴠᴇ ʟɪɴᴋ", link, "header")
                   elif not link.startswith("https://drive.google.com/"):
-                    buttons.url_button("ᴄʟᴏᴜᴅ ʟɪɴᴋ", link, "header")
+                    buttons.ubutton("ᴄʟᴏᴜᴅ ʟɪɴᴋ", link, "header")
                 else:
                     msg += f"\n\nPath: <code>{rclonePath}</code>"
                 if (

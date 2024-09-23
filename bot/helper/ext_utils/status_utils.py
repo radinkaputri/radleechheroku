@@ -163,6 +163,8 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
             msg = f"No Active {status} Tasks!\n\n"
 
     buttons = ButtonMaker()
+    if is_user:
+       buttons.ibutton("ʙᴏᴛ\nʀᴇꜰʀᴇꜱʜ", f"status {sid} ref", position="header")
     if not is_user:
         buttons.ibutton("ʙᴏᴛ\nɪɴꜰᴏ", f"status {sid} ov", position="header")
     if len(tasks) > STATUS_LIMIT:
@@ -176,7 +178,6 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
         for label, status_value in list(STATUSES.items())[:9]:
             if status_value != status:
                 buttons.ibutton(label, f"status {sid} st {status_value}")
-    buttons.ibutton("ʙᴏᴛ\nʀᴇꜰʀᴇꜱʜ", f"status {sid} ref", position="header")
     button = buttons.build_menu(8)
     msg += (
         "\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
