@@ -12,7 +12,7 @@ from pyrogram.types import BotCommand
 from concurrent.futures import ThreadPoolExecutor
 from aiohttp import ClientSession
 
-from bot import user_data, config_dict, bot_loop, OWNER_ID
+from bot import user_data, config_dict, bot_loop, OWNER_ID, LOGGER
 from bot.helper.ext_utils.help_messages import YT_HELP_DICT, MIRROR_HELP_DICT
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.telegraph_helper import telegraph
@@ -128,8 +128,7 @@ async def set_commands(client):
             "to check bot statistics."
         ),
         BotCommand(
-            f"{BotCommands.CancelTaskCommand[0]}",
-            f"or /{BotCommands.CancelTaskCommand[1]} to cancel a task."
+            f"{BotCommands.CancelTaskCommand}", "to cancel a task."
         ),
         BotCommand(
             f"{BotCommands.CancelAllCommand}",

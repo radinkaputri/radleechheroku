@@ -159,7 +159,7 @@ NOTE: Try each command without any argument to see more detalis.<blockquote expa
 /{BotCommands.UserSetCommand[0]} or /{BotCommands.UserSetCommand[1]} [query]: Users settings.
 /{BotCommands.BotSetCommand[0]} or /{BotCommands.BotSetCommand[1]} [query]: Bot settings.
 /{BotCommands.BtSelectCommand}: Select files from torrents by gid or reply.
-/{BotCommands.CancelTaskCommand[0]}: Cancel task by gid or reply.
+/{BotCommands.CancelTaskCommand}: Cancel task by gid or reply.
 /{BotCommands.CancelAllCommand} [query]: Cancel all [status] tasks.
 /{BotCommands.ListCommand} [query]: Search in Google Drive(s).
 /{BotCommands.SearchCommand} [query]: Search for torrents with API.
