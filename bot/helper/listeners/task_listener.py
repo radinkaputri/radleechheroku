@@ -236,9 +236,8 @@ class TaskListener(TaskConfig):
             await DbManger().rm_complete_task(self.message.link)
         msg = (
           f"<b><i>{escape(self.name)}</i></b>\n"
+          f"<b>cc: </b>{self.tag}\n"
           f"\n<code>Size   : </code>{get_readable_file_size(size)}"
-          f"\n<code>User   : </code>{self.tag}"
-          f"\n<code>UserID : </code>{self.message.from_user.id}"
           )
         LOGGER.info(f"Task Done: {self.name}")
         if self.isLeech:
@@ -283,9 +282,9 @@ class TaskListener(TaskConfig):
                 buttons = ButtonMaker()
                 if link:
                   if link.startswith("https://drive.google.com/") and not config_dict["DISABLE_DRIVE_LINK"]:
-                    buttons.ubutton("Drive link ♻️", link, "header")
+                    buttons.ubutton("Drive link ♻️", link)
                   elif not link.startswith("https://drive.google.com/"):
-                    buttons.ubutton("Cloud link ☁️", link, "header")
+                    buttons.ubutton("Cloud link ☁️", link)
                 else:
                     msg += f"\n\nPath: <code>{rclonePath}</code>"
                 if (
@@ -319,7 +318,6 @@ class TaskListener(TaskConfig):
             else:
                 msg += f"\nPath: <code>{rclonePath}</code>"
                 button = None
-            msg += f"\n\n<b><i>Click the button below to Download</b></i>"
             await sendMessage(self.message, msg, button)
             if self.seed:
                 if self.newDir:
