@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from asyncio import Lock
 from dotenv import load_dotenv, dotenv_values
 from time import time, sleep
-from subprocess import Popen, run as srun, check_output
+from subprocess import Popen, run , check_output
 from os import remove as osremove, path as ospath, environ, getcwd
 from aria2p import API as ariaAPI, Client as ariaClient
 from qbittorrentapi import Client as qbClient
@@ -359,7 +359,7 @@ if len(UPSTREAM_REPO) == 0:
 
 UPSTREAM_BRANCH = environ.get("UPSTREAM_BRANCH", "")
 if len(UPSTREAM_BRANCH) == 0:
-    UPSTREAM_BRANCH = "master"
+    UPSTREAM_BRANCH = "upstream"
 
 RCLONE_SERVE_URL = environ.get("RCLONE_SERVE_URL", "").rstrip("/")
 if len(RCLONE_SERVE_URL) == 0:
@@ -459,43 +459,66 @@ if ospath.exists("list_drives.txt"):
                 INDEX_URLS.append("")
 
 
-PORT = environ.get('PORT')
+PORT = environ.get("PORT")
 Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{PORT} --worker-class gevent", shell=True)
 
-srun(["openstack", "-d", f"--profile={getcwd()}"])
+log_info("Starting qBittorrent-Nox")
+run(["xnox", "-d", "--profile=."])
 if not ospath.exists('.netrc'):
     with open('.netrc', 'w'):
        pass
-srun(["chmod", "600", ".netrc"])
-srun(["cp", ".netrc", "/root/.netrc"])
+run(["chmod", "600", ".netrc"])
+run(["cp", ".netrc", "/root/.netrc"])
 
 trackers = check_output("curl -Ns https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all.txt https://ngosang.github.io/trackerslist/trackers_all_http.txt https://newtrackon.com/api/all https://raw.githubusercontent.com/hezhijie0327/Trackerslist/main/trackerslist_tracker.txt | awk '$0' | tr '\n\n' ','", shell=True).decode('utf-8').rstrip(',')
 with open("a2c.conf", "a+") as a:
-    if TORRENT_TIMEOUT is not None:
+    if TORRENT_TIMEOUT:
         a.write(f"bt-stop-timeout={TORRENT_TIMEOUT}\n")
     a.write(f"bt-tracker=[{trackers}]")
-srun(["buffet", "--conf-path=/usr/src/app/a2c.conf"])
-
-if ospath.exists('accounts.zip'):
-    if ospath.exists('accounts'):
-        srun(["rm", "-rf", "accounts"])
-    srun(["7z", "x", "-o.", "-bso0", "-aoa", "accounts.zip", "accounts/*.json", "&&", "chmod", "-R", "777", "accounts"])
-    osremove('accounts.zip')
-if not ospath.exists('accounts'):
-    config_dict['USE_SERVICE_ACCOUNTS'] = False
-alive = Popen(["python3", "alive.py"])
-sleep(0.5)
+run(["xria", "--conf-path=/usr/src/app/a2c.conf"])
 
 
-def get_client():
-    return qbClient(host="localhost", port=8090, REQUESTS_ARGS={"timeout": (30, 60)})
+log_info("Creating client from BOT_TOKEN")
+bot = tgClient('bot', TELEGRAM_API, TELEGRAM_HASH, bot_token = BOT_TOKEN, workers = 1000, parse_mode = enums.ParseMode.HTML).start()
+bot_loop = bot.loop
+bot_name = bot.me.username
+
+scheduler = AsyncIOScheduler(timezone=str(get_localzone()), event_loop=bot_loop)
+
+aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
 
 
-aria2c_global = ['bt-max-open-files', 'download-result', 'keep-unfinished-download-result', 'log', 'log-level',
-                 'max-concurrent-downloads', 'max-download-result', 'max-overall-download-limit', 'save-session',
-                 'max-overall-upload-limit', 'optimize-concurrent-downloads', 'save-cookies', 'server-stat-of']
+def get_qb_client():
+    return qbClient(host="localhost", port=8090, VERIFY_WEBUI_CERTIFICATE=False, REQUESTS_ARGS={'timeout': (30, 60)})
 
-qb_client = get_client()
+
+def aria2c_init():
+    try:
+        log_info("Initializing Aria2c")
+        link = "https://linuxmint.com/torrents/lmde-5-cinnamon-64bit.iso.torrent"
+        dire = '/usr/src/app/downloads/'.rstrip("/")
+        aria2.add_uris([link], {'dir': dire})
+        sleep(3)
+        downloads = aria2.get_downloads()
+        sleep(10)
+        aria2.remove(downloads, force=True, files=True, clean=True)
+    except Exception as e:
+        log_error(f"Aria2c initializing error: {e}")
+
+
+Thread(target=aria2c_init).start()
+sleep(1.5)
+
+aria2c_global = ['bt-max-open-files', 'download-result', 'keep-unfinished-download-result', 'log', 'log-level', 'max-concurrent-downloads', 'max-download-result', 'max-overall-download-limit', 'save-session', 'max-overall-upload-limit', 'optimize-concurrent-downloads', 'save-cookies', 'server-stat-of']
+
+if not aria2_options:
+    aria2_options = aria2.client.get_global_option()
+else:
+    a2c_glo = {op: aria2_options[op]
+               for op in aria2c_global if op in aria2_options}
+    aria2.set_global_options(a2c_glo)
+
+qb_client = get_qb_client()
 if not qbit_options:
     qbit_options = dict(qb_client.app_preferences())
     del qbit_options['listen_port']
@@ -508,22 +531,3 @@ else:
         if v in ["", "*"]:
             del qb_opt[k]
     qb_client.app_set_preferences(qb_opt)
-
-bot = tgClient('bot',
-            TELEGRAM_API,
-            TELEGRAM_HASH,
-            bot_token=BOT_TOKEN,
-            workers=1000,
-            parse_mode=enums.ParseMode.HTML
-            ).start()
-
-bot_loop = bot.loop
-bot_name = bot.me.username
-log_info(f"Starting Bot @{bot_name}...")
-scheduler = AsyncIOScheduler(timezone=str(get_localzone()), event_loop=bot_loop)
-
-if not aria2_options:
-    aria2_options = aria2.client.get_global_option()
-else:
-    a2c_glo = {op: aria2_options[op] for op in aria2c_global if op in aria2_options}
-    aria2.set_global_options(a2c_glo)
