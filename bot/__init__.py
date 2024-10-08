@@ -22,6 +22,7 @@ from logging import (
     warning as log_warning,
     ERROR,
 )
+from threading import Thread
 
 # from faulthandler import enable as faulthandler_enable
 # faulthandler_enable()
@@ -488,7 +489,7 @@ scheduler = AsyncIOScheduler(timezone=str(get_localzone()), event_loop=bot_loop)
 aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
 
 
-def get_qb_client():
+def get_client():
     return qbClient(host="localhost", port=8090, VERIFY_WEBUI_CERTIFICATE=False, REQUESTS_ARGS={'timeout': (30, 60)})
 
 
@@ -518,7 +519,7 @@ else:
                for op in aria2c_global if op in aria2_options}
     aria2.set_global_options(a2c_glo)
 
-qb_client = get_qb_client()
+qb_client = get_client()
 if not qbit_options:
     qbit_options = dict(qb_client.app_preferences())
     del qbit_options['listen_port']
