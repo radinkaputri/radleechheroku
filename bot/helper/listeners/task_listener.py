@@ -1,6 +1,7 @@
 from requests import utils as rutils
 from aiofiles.os import path as aiopath, listdir, makedirs
 from html import escape
+from time import time
 from aioshutil import move
 from asyncio import sleep, Event, gather
 
@@ -31,7 +32,7 @@ from bot.helper.telegram_helper.message_utils import (
     delete_status,
     update_status_message,
 )
-from bot.helper.ext_utils.status_utils import get_readable_file_size
+from bot.helper.ext_utils.status_utils import get_readable_file_size, get_readable_time
 from bot.helper.ext_utils.bot_utils import sync_to_async
 from bot.helper.ext_utils.links_utils import is_gdrive_id
 from bot.helper.ext_utils.task_manager import start_from_queued
@@ -50,6 +51,7 @@ from bot.helper.common import TaskConfig
 class TaskListener(TaskConfig):
     def __init__(self):
         super().__init__()
+        self.time = time()
 
     async def clean(self):
         try:
@@ -235,29 +237,31 @@ class TaskListener(TaskConfig):
         ):
             await DbManger().rm_complete_task(self.message.link)
         msg = (
-          f"<b><i>{escape(self.name)}</i></b>\n"
-          f"<b>cc: </b>{self.tag}\n"
-          f"\n<code>Size   : </code>{get_readable_file_size(size)}"
-          )
+            f"\n<b>Hey {self.tag}!\nYour job is done.</b>"
+            f"\n\n<blockquote><code>Size  </code>: {get_readable_file_size(self.size)}"
+            f"\n<code>Past  </code>: {get_readable_time(time() - self.time)}"
+            f"\n<code>Mode  </code>: {self.mode}"
+        )
         LOGGER.info(f"Task Done: {self.name}")
         if self.isLeech:
-            msg += f"\n<code>Total  : </code>{folders}"
-            msg += f"\n<code>Mode   : </code>Leech"
+            msg += f"\n<code>Files </code>: {folders}\n"
             if mime_type != 0:
-                msg += f"\n<code>Corrupt:  </code>{mime_type}"
+                msg += f"<code>Error </code>: {mime_type}\n"
             buttons = ButtonMaker()
             if not files:
-                buttons.ubutton("Open Inbox 📬", f"https://t.me/{bot_name}")
-                button = buttons.build_menu(1)
+                msg += f"</blockquote>\n<b><i>Files has been sent in your DM.</b></i>"
                 await sendMessage(self.message, msg, button)
             else:
-                for link, name in files.items():
-                  if link:
-                    buttons.ubutton(f"Open Dump Chat ️📂", link, "header")
-                    break
-                if buttons:
-                  button = buttons.build_menu(1)
-                  await sendMessage(self.message, msg, button)
+                msg += f"</blockquote>\n"
+                fmsg = ""
+                for index, (link, name) in enumerate(files.items(), start=1):
+                    fmsg += f"{index}. <a href='{link}'>{name}</a>\n"
+                    if len(fmsg.encode() + msg.encode()) > 4000:
+                        await sendMessage(self.message, msg + fmsg)
+                        await sleep(1)
+                        fmsg = ""
+                if fmsg != "":
+                    await sendMessage(self.message, msg + fmsg)
 
             if self.seed:
                 if self.newDir:
@@ -268,11 +272,10 @@ class TaskListener(TaskConfig):
                 await start_from_queued()
                 return
         else:
-            msg += f"\n<code>Type   : </code>{mime_type}"
-            msg += f"\n<code>Mode   : </code>Cloud"
+            msg += f"\n<code>Type  </code>: {mime_type}"
             if mime_type == "Folder":
-                msg += f"\n<code>SubFd  : </code>{folders}"
-                msg += f"\n<code>Files  : </code>{files}"
+                msg += f"\n<code>Files </code>: {files}"
+                msg += f"\n<code>Folder</code>: {folders}"
             if (
                 link
                 or rclonePath
@@ -286,7 +289,7 @@ class TaskListener(TaskConfig):
                   elif not link.startswith("https://drive.google.com/"):
                     buttons.ubutton("Cloud link ☁️", link)
                 else:
-                    msg += f"\n\nPath: <code>{rclonePath}</code>"
+                    msg += f"\n\n<code>Path  </code>: {rclonePath}"
                 if (
                     rclonePath
                     and (RCLONE_SERVE_URL := config_dict["RCLONE_SERVE_URL"])
@@ -316,8 +319,9 @@ class TaskListener(TaskConfig):
                             buttons.ubutton("Stream link 🌐", share_urls)
                 button = buttons.build_menu(2)
             else:
-                msg += f"\nPath: <code>{rclonePath}</code>"
+                msg += f"\n\n<code>Path  </code>: {rclonePath}"
                 button = None
+            msg += f"</blockquote>\n\n<b><i>Files has been sent in your Drive.</b></i>"
             await sendMessage(self.message, msg, button)
             if self.seed:
                 if self.newDir:
@@ -352,7 +356,10 @@ class TaskListener(TaskConfig):
                 del task_dict[self.mid]
             count = len(task_dict)
             self.removeFromSameDir()
-        msg = f"{self.tag} Download: {escape(error)}"
+        msg = f"<b>Sorry {self.tag}!\nYour download has been stopped.</b>"
+        msg += f"\n\n<blockquote><code>Reason </code>: {escape(str(error))}"
+        msg += f"\n<code>Past   </code>: {get_readable_time(time() - self.time)}"
+        msg += f"\n<code>Mode   </code>: {self.mode}</blockquote>"
         await sendMessage(self.message, msg, button)
         if count == 0:
             await self.clean()
@@ -389,7 +396,11 @@ class TaskListener(TaskConfig):
             if self.mid in task_dict:
                 del task_dict[self.mid]
             count = len(task_dict)
-        await sendMessage(self.message, f"{self.tag} {escape(error)}")
+        msg = f"Sorry {self.tag}!\nYour upload has been stopped."
+        msg += f"\n\n<blockquote><code>Reason </code>: {escape(str(error))}"
+        msg += f"\n<code>Past   </code>: {get_readable_time(time() - self.time)}"
+        msg += f"\n<code>Mode   </code>: {self.mode}</blockquote>"
+        await sendMessage(self.message, msg)
         if count == 0:
             await self.clean()
         else:

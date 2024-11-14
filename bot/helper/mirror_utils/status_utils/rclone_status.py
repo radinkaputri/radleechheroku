@@ -1,5 +1,4 @@
-from bot.helper.ext_utils.status_utils import MirrorStatus
-from bot.helper.ext_utils.bot_utils import safemode_message
+from bot.helper.ext_utils.status_utils import MirrorStatus, get_readable_time
 
 
 class RcloneStatus:
@@ -8,7 +7,6 @@ class RcloneStatus:
         self._gid = gid
         self._status = status
         self.listener = listener
-        self.safemode_msg = safemode_message()
         self.engine = "Rclone"
 
     def gid(self):

@@ -94,8 +94,37 @@ class TaskConfig:
         self.as_doc = False
         self.suproc = None
         self.thumb = None
+        self.time = ""
+        self.mode =""
         self.extension_filter = []
         self.isSuperChat = self.message.chat.type.name in ["SUPERGROUP", "CHANNEL"]
+
+    async def set_mode(self):
+        mode = "Gdrive"  # Default
+    
+        if self.isQbit:
+            mode = "Qbit"
+        elif self.isYtDlp:
+            mode = "Ytdlp"
+        elif self.isLeech:
+            mode = "Leech"
+        elif self.upDest in {"rc", "rcl", "rcu"} or is_rclone_path(str(self.up_dest)):
+            mode = "Rclone"
+        elif self.isClone:
+            mode = "Clone"
+    
+        if mode in {"Qbit", "Ytdlp"}:
+            if self.isLeech:
+                mode += " Leech"
+            else:
+                mode += " Gdrive"
+        
+        if self.compress:
+            mode += " (Zip)"
+        elif self.extract:
+            mode += " (Unzip)"
+        
+        self.mode = mode
 
     def getTokenPath(self, dest):
         if dest.startswith("mtp:"):
@@ -305,6 +334,7 @@ class TaskConfig:
             if is_telegram_link(self.thumb):
                 msg = (await get_tg_link_message(self.thumb))[0]
                 self.thumb = await createThumb(msg) if msg.photo or msg.document else ""
+        await self.set_mode()
 
     async def getTag(self, text: list):
         if len(text) > 1 and text[1].startswith("Tag: "):

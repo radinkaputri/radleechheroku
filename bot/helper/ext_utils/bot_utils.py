@@ -1,5 +1,4 @@
 from httpx import AsyncClient
-from random import choice
 from asyncio import (
     create_subprocess_exec,
     create_subprocess_shell,
@@ -84,10 +83,6 @@ async def delete_links(message):
 async def set_commands(client):
     await client.set_bot_commands([
         BotCommand(
-            f"{BotCommands.StartCommand}",
-            "Start the bot and get basic information."
-        ),
-        BotCommand(
             f"{BotCommands.MirrorCommand[0]}",
             f"or /{BotCommands.MirrorCommand[1]} to mirror links and files to the cloud."
         ),
@@ -156,26 +151,12 @@ async def set_commands(client):
         ),
     ])
 
-def safemode_message():
-    messages = [
-        "The future feels so uncertain. Will I find my way?",
-        "What if my dreams fade away as life changes?",
-        "Sometimes, expectations feel too heavy. Will I know what I want?",
-        "I'm scared of making the wrong choices for my future.",
-        "Will I ever find true happiness, or will I always be searching?",
-        "The pressure to succeed is real. What if I fall short?",
-        "I worry that I’ll get stuck in a routine and miss out on life.",
-        "What if I choose a path and realize it's not for me?",
-        "Can I really trust myself to make the right decisions?",
-        "The future seems so far away, yet it feels like it’s closing in."
-    ]
-    return choice(messages)
 
 async def get_telegraph_list(telegraph_content):
     path = [
         (
             await telegraph.create_page(
-                title="𝙓𝙔𝙍𝘼𝘿 𝘿𝙍𝙄𝙑𝙀 𝙎𝙀𝘼𝙍𝘾𝙃", content=content
+                title="Drive Search", content=content
             )
         )["path"]
         for content in telegraph_content

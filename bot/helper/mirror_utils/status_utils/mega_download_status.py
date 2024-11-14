@@ -3,8 +3,7 @@ from bot.helper.ext_utils.status_utils import (
     MirrorStatus,
     get_readable_time,
 )
-from bot.helper.ext_utils.bot_utils import safemode_message
-
+from mega import MegaApi
 
 class MegaDownloadStatus:
     def __init__(self, listener, obj, size, gid):
@@ -13,7 +12,10 @@ class MegaDownloadStatus:
         self._gid = gid
         self.listener = listener
         self.safemode_msg = safemode_message()
-        self.engine = "MegaApi"
+        self.engine = f"Mega SDK v{self._eng_ver()}"
+
+    def _eng_ver(self):
+        return MegaApi("xyr").getVersion()
 
     def name(self):
         return self.listener.name

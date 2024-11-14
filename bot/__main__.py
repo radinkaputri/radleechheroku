@@ -104,13 +104,13 @@ async def start(client, message):
     reply_markup = buttons.build_menu(2)
 
     start_string = f"""
-<b>Hello, I am {bot_name}</b>
+<b>Hello {message.from_user.mention(style='HTML')}!
 
 I can help you mirror links, files, or torrents to Google Drive, rclone cloud, or Telegram.
 Type /{BotCommands.HelpCommand} to see the list of commands.
 
-<b>Uptime: {get_readable_time(time() - botStartTime)}</b>
-<b>{status}</b>
+Uptime: {get_readable_time(time() - botStartTime)}
+{status}</b>
 """
 
     await sendMessage(message, start_string, reply_markup)

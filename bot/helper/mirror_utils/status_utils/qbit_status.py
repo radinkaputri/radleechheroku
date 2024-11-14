@@ -1,7 +1,7 @@
 from asyncio import sleep
 
 from bot import LOGGER, get_client, QbTorrents, qb_listener_lock
-from bot.helper.ext_utils.bot_utils import sync_to_async, safemode_message
+from bot.helper.ext_utils.bot_utils import sync_to_async
 from bot.helper.ext_utils.status_utils import (
     MirrorStatus,
     get_readable_file_size,
@@ -23,9 +23,11 @@ class QbittorrentStatus:
         self.queued = queued
         self.seeding = seeding
         self.listener = listener
-        self.safemode_msg = safemode_message()
         self._info = get_download(self.client, f"{self.listener.mid}")
-        self.engine = "qBittorrent"
+        self.engine = f"qBit {self._eng_ver()}"
+
+    def _eng_ver(self):
+        return qb_client.app.version
 
     def _update(self):
         self._info = get_download(self.client, f"{self.listener.mid}", self._info)

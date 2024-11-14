@@ -1,6 +1,5 @@
 from bot import LOGGER, subprocess_lock
-from bot.helper.ext_utils.status_utils import get_readable_file_size, MirrorStatus
-from bot.helper.ext_utils.bot_utils import safemode_message
+from bot.helper.ext_utils.status_utils import get_readable_file_size, MirrorStatus, get_readable_time
 
 
 class SplitStatus:
@@ -8,7 +7,6 @@ class SplitStatus:
         self._gid = gid
         self._size = size
         self.listener = listener
-        self.safemode_msg = safemode_message()
         self.engine = "FFmpeg"
 
     def gid(self):

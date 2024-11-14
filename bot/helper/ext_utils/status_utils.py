@@ -116,44 +116,55 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
 
     for index, task in enumerate(tasks[start_position: STATUS_LIMIT + start_position], start=1):
         tstatus = task.status()
+        elapse = time() - task.listener.time
+        elapsed = "-" if elapse < 1 else get_readable_time(elapse)
         user_tag = task.listener.tag.replace("@", "").replace("_", " ")
         cancel_task = f"<b>/{BotCommands.CancelTaskCommand}_{task.gid()}</b>"
-
-        if config_dict['SAFE_MODE']:
-            msg += f"<pre>{tstatus}: {task.safemode_msg}..</pre>"
+        safe_mode = int(config_dict["SAFE_MODE"])
+        if safe_mode > 0:
+          if elapse <= safe_mode:
+              msg += f"<b>{escape(f'{task.name()}')}</b>"
+          else:
+              msg += f"<b>Task is being Processed!</b>"
         else:
-            msg += f"<pre><a href='{task.listener.message.link}'>{tstatus}</a>: "
-            msg += f"{escape(f'{task.name()}')}</pre>"
-
+            msg += f"<b>{escape(f'{task.name()}')}</b>"
         if tstatus not in [MirrorStatus.STATUS_SEEDING, MirrorStatus.STATUS_QUEUEUP, MirrorStatus.STATUS_SPLITTING]:
             msg += (
-                f"\n{get_progress_bar_string(task.progress())} » <b><i>{task.progress()}</b></i>"
-                f"\n<code>Size   :</code> {task.size()}"
-                f"\n<code>Done   :</code> {task.processed_bytes()}"
+                f"\n<blockquote>{get_progress_bar_string(task.progress())} » <b><i>{task.progress()}</b></i>"
+                f"\n<code>Status :</code> <b>{tstatus}</b>"
+                f"\n<code>Done   :</code> {task.processed_bytes()} of {task.size()}"
                 f"\n<code>Speed  :</code> {task.speed()}"
-                f"\n<code>Engine :</code> {task.engine}"
                 f"\n<code>ETA    :</code> {task.eta()}"
-                f"\n<code>User   :</code> {user_tag}"
-                f"\n<code>UserID :</code> {task.listener.message.from_user.id}"
+                f"\n<code>Past   :</code> {elapsed}"
+                f"\n<code>User   :</code> <code>{user_tag}</code>"
+                f"\n<code>UserID :</code> {task.listener.user_id}"
+                f"\n<code>Detail :</code> {task.listener.mode}"
             )
             if hasattr(task, "seeders_num"):
                 try:
-                    msg += (
-                        f"\n<code>Seeders:</code> {task.seeders_num()}"
-                        f"\n<code>Leechers:</code> {task.leechers_num()}"
-                    )
+                    msg += f"\n<code>S/L    :</code> {task.seeders_num()}/{task.leechers_num()}"
                 except:
                     pass
         elif tstatus == MirrorStatus.STATUS_SEEDING:
             msg += (
-                f"\n<code>Size   :</code> {task.size()}"
+                f"\n<blockquote><code>Size   :</code> {task.size()}"
                 f"\n<code>Speed  :</code> {task.seed_speed()}"
                 f"\n<code>Uploaded:</code> {task.uploaded_bytes()}"
                 f"\n<code>Ratio  :</code> {task.ratio()}"
                 f"\n<code>Time   :</code> {task.seeding_time()}"
+                f"\n<code>User   :</code> <code>{user_tag}</code>"
+                f"\n<code>UserID :</code> {task.listener.message.from_user.id}</blockquote>"
             )
         else:
-            msg += f"\n<code>Size   :</code> {task.size()}"
+            msg += (
+                f"\n<blockquote><code>Status :</code> <b>{tstatus}</b>"
+                f"\n<code>Size   :</code> {task.size()}"
+                f"\n<code>Detail :</code> {task.listener.mode}"
+                f"\n<code>Past   :</code> {elapsed}"
+                f"\n<code>User   :</code> <code>{user_tag}</code>"
+                f"\n<code>UserID :</code> {task.listener.user_id}"
+            )
+        msg += f"\n<code>Engine :</code> <b><i>{task.engine}</i></b></blockquote>"
         msg += f"\n<blockquote>{cancel_task}</blockquote>\n\n"
 
     if len(msg) == 0:
